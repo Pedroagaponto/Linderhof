@@ -117,6 +117,11 @@ int parserAttackOpt (char key, char *arg, ArgState *state)
                 draft->type = SSDP;
                 strcpy(draft->mirrorName, "SSDP");
             }
+            else if( !strcmp(arg, "coap") )
+            {
+                draft->type = COAP;
+                strcpy(draft->mirrorName, "COAP STAT");
+            }
             else
             {
                 Efatal(ERROR_CLI, "Invalid input");

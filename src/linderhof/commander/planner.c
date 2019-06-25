@@ -1,5 +1,6 @@
 #include "venus.h"
 #include "commander/planner.h"
+#include "hom/coap.h"
 #include "hom/memcached.h"
 #include "hom/ssdp.h"
 #include "hom/dns.h"
@@ -14,6 +15,11 @@ LhfPlan * Planner( LhfDraft *p_draft )
 
     switch (p_draft->type)
     {
+        case COAP:
+            plan->type = COAP;
+            memcpy( plan->atkData, p_draft, sizeof(LhfDraft));
+            plan->atk_cmd = ExecuteCoapMirror;
+            break;
         case MEMCACHED_GETSET:
             plan->type = MEMCACHED_GETSET;
             memcpy( plan->atkData, p_draft, sizeof(LhfDraft));
@@ -35,7 +41,7 @@ LhfPlan * Planner( LhfDraft *p_draft )
             plan->atk_cmd = ExecuteSsdpMirror;
             break;
 
-        //Colocar em ordem alfabética ao implementar
+        //Colocar em ordem alfabética ao implementar            
         case DNS:
         default:
             Efatal(ERROR_PLANNER, "Mirror not implemented\n");

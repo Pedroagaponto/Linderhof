@@ -23,9 +23,10 @@
 #define ERROR_MEMCACHED     -400
 #define ERROR_ORYX          -500
 #define ERROR_CLI           -600
-#define ERROR_PLANNER       -700 
-#define ERROR_BLACKSMITH    -800 
-#define ERROR_NTP		    -900 
+#define ERROR_PLANNER       -700
+#define ERROR_BLACKSMITH    -800
+#define ERROR_NTP           -900
+#define ERROR_COAP          -1000
 
 /**
  *  @brief Display error message
