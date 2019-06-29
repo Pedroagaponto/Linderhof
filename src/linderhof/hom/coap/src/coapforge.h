@@ -32,10 +32,13 @@ IPPROTO_MAX		    256
 typedef struct __attribute__((__packed__)) {
     u_int8_t tk_len:4, type:2, version:2; //little endian
     u_int8_t code;
-    u_int16_t message_id; //if needed, remember to convert in host number
-    u_int32_t token; // tk_len = 0
-    u_int8_t opt_len:4, opt_delta:4;
+    u_int16_t message_id;
+//    u_int16_t token; // tk_len = 0
 }BinaryRequestHeader;
+
+typedef struct __attribute__((__packed__)){
+    u_int8_t len:4, delta:4;
+} CoapOption;
 
 
 #define CON     0
@@ -43,6 +46,11 @@ typedef struct __attribute__((__packed__)) {
 #define ACK     2
 #define RST     3
 #define GET     1
+#define URIPATH 11
+#define URIPATHCONT 0
+#define BLOCK2 12
+#define BLOCK1024 6
+#define BLOCK2SIZE 2
 
 #define COAP_GET     200
 
