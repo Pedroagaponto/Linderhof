@@ -20,7 +20,7 @@ typedef struct {
 
 static void getInjetorThp( NetunoInjector * p_netuno )
 {
-    float pkt = 0;
+    int pkt = 0;
 
     for(int i = 0; i < p_netuno->injCells; i++)
     {
@@ -28,7 +28,7 @@ static void getInjetorThp( NetunoInjector * p_netuno )
         p_netuno->injectors[i]->net.pktCounter = 0;
     }
     p_netuno->probes = pkt;
-    p_netuno->throughputCurrent = p_netuno->probes * p_netuno->pkt->pkt_size; 
+    p_netuno->throughputCurrent = p_netuno->probes * p_netuno->pkt->pkt_size;
 }
 
 static void resetBucket( NetunoInjector *p_netuno )
@@ -37,12 +37,12 @@ static void resetBucket( NetunoInjector *p_netuno )
     {
         for(int i = 0; i < p_netuno->injCells; i++)
         {
-            p_netuno->injectors[i]->net.bucketSize = p_netuno->bucket; 
+            sem_post(&p_netuno->injectors[i]->net.sem);
         }
     }
     else
     {
-        p_netuno->injectors[0]->net.bucketSize = 1;
+        sem_post(&p_netuno->injectors[0]->net.sem);
     }
 }
 
@@ -62,7 +62,7 @@ void StartNetunoInjector( Packet *p_pkt, unsigned int p_level, unsigned int p_ti
     netuno.pkt = p_pkt;
     FILE *fpLog = CreateLoggerFile(p_file);
 
-    netuno.injectors = StartInjector( netuno.pkt );
+    netuno.injectors = StartInjector( netuno.pkt, GetBucketByLevel(p_level));
     netuno.injCells = MAXINJECTORS;
     
     if(p_level == 0 || p_level > NETUNO_MAXLEVEL)
@@ -100,6 +100,10 @@ void StartNetunoInjector( Packet *p_pkt, unsigned int p_level, unsigned int p_ti
             if( netuno.level > 0 && netuno.level <= NETUNO_MAXLEVEL )
             {
                 netuno.bucket = GetBucketByLevel(netuno.level);
+                for(int i = 0; i < netuno.injCells; i++)
+                {
+                    netuno.injectors[i]->net.bucketMax = netuno.bucket;
+                }
             }
             else
             {

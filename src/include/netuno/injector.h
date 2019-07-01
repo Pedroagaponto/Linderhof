@@ -3,6 +3,7 @@
   #define INJECTOR_H
 
 #include <pthread.h>
+#include <semaphore.h>
 #include "common/common.h"
 #include "netuno/netuno.h"
 
@@ -12,9 +13,11 @@ typedef struct {
     Packet *pkt;
     int socket;
     bool freeBucket;
+    unsigned int bucketMax;
     unsigned int bucketSize;
     unsigned int pktCounter;
     unsigned int pktDroped;
+    sem_t sem;
 }InjectorNet;
 
 typedef struct {
@@ -28,7 +31,7 @@ typedef struct {
  * @param p_pkt[in] Packet data.
  * @return Injectors handler struct 
  */
-Injector ** StartInjector( Packet *p_pkt );
+Injector ** StartInjector( Packet *p_pkt, unsigned bucketMax );
 
 /**
  * @brief Destroy injector.

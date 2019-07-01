@@ -16,12 +16,16 @@ static void *_injectorHandler( void *p_arg )
 {
     Injector *injector = (Injector *)p_arg;
 
-    printf("th %lu, ip: %s\n", injector->id, injector->net.pkt->ip_dest );
+    printf("th %lu, ip: %s, b: %d, m:%d\n", injector->id, injector->net.pkt->ip_dest, injector->net.bucketSize, injector->net.bucketMax );
     while(1)
     {
+        if(sem_wait(&injector->net.sem) != 0){
+            perror("sem_wait");
+            continue;
+        }
+        
         while( injector->net.bucketSize || injector->net.freeBucket )
         {
-            printf("send %lu, ip: %s\n", injector->id, injector->net.pkt->ip_dest );
             if( ERROR_NET != SendPacket(injector->net.socket, injector->net.pkt) )
             {
                 //Packet was sent
@@ -33,6 +37,8 @@ static void *_injectorHandler( void *p_arg )
                 injector->net.pktDroped++;
             }
         }
+
+        injector->net.bucketSize = injector->net.bucketMax;
     };
     return NULL; //Keep compiler quiet
 }
@@ -46,10 +52,14 @@ void injectorBootstrap( Injector *injector )
 
 }
 
-Injector ** StartInjector( Packet *p_pkt )
+Injector ** StartInjector( Packet *p_pkt, unsigned bucketMax)
 {
     Injector **injector = NULL;
     int n = 1;
+
+    printf("net buc max: %u\n",bucketMax);
+    if (bucketMax == 0)
+        bucketMax++;
 
     //FILE *listReflect = fopen("refletors.csv", "r");
     #define NN 3
@@ -93,8 +103,10 @@ Injector ** StartInjector( Packet *p_pkt )
         
         inj->net.freeBucket = false;
         inj->net.bucketSize = 0;
+        inj->net.bucketMax = bucketMax;
         inj->net.pktCounter = 0;
         inj->net.pktDroped = 0;
+        sem_init(&inj->net.sem, 0, 0);
 
         injectorBootstrap(inj);
         injector[i] = inj;
