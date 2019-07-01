@@ -64,7 +64,7 @@ Injector ** StartInjector( Packet *p_pkt, unsigned bucketMax)
     //FILE *listReflect = fopen("refletors.csv", "r");
     #define NN 3
     //struct sockaddr_in saddr[MAXINJECTORS];
-    char addrs[NN][16] = {"192.168.0.64", "192.168.0.63", "192.168.0.61"};
+    char addrs[NN][16] = {"192.168.1.10", "192.168.1.11", "192.168.1.12"};
     // char addrs[3][16] = {"192.168.0.63", "192.168.0.63", "192.168.0.63"};
     void *pack_rot[NN] = {0};
 
