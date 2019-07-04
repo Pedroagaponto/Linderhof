@@ -12,11 +12,11 @@ set(VERSION_PATCH 0)
 
 set(CMAKE_BINARY_DIR ${SOURCE_DIR}/bin)
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR})
-set(CMAKE_CXX_FLAGS_RELEASE "-O0")
+set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 
 
 #add_compile_definitions("ORYXNET")
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c11 -Wall -g -Wl,--no-as-needed -lpthread -lcap -lm -D _GNU_SOURCE")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c11 -Wall -O3 -Wl,--no-as-needed -lpthread -lcap -lm -D _GNU_SOURCE")
 include_directories(src/include)
 
 file(GLOB LINDERHOF src/linderhof/main.c src/linderhof/*/*.c src/interface/interface.c src/interface/oryx.c src/linderhof/hom/*/src/*.c src/common/*.c src/netuno/*.c)
